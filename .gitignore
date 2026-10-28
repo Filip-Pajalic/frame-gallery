@@ -1,0 +1,9 @@
+/data/
+/devdata/
+*.exe
+unraid/.shipped/
+# personal deployment: the deploy script and the template with real addresses
+deploy.py
+unraid/*.local.xml
+__pycache__/
+build/

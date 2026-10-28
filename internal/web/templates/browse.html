@@ -1,0 +1,54 @@
+{{template "head" "Reframed Gallery"}}
+<div class="shell">
+{{template "side" .}}
+<main class="main">
+  <header class="top">
+    <h1>{{if .Heading}}{{.Heading}}{{else}}Reframed Gallery{{end}} {{if .Cards}}<span class="muted mono">{{len .Cards}}</span>{{end}}</h1>
+    <form class="browse-search" action="/browse" method="get" role="search">
+      <label class="visually-hidden" for="q">Search artist or title</label>
+      <input id="q" type="text" name="q" value="{{.Query}}" placeholder="Artist or title, e.g. monet snow">
+      <button class="btn" type="submit">Search</button>
+    </form>
+  </header>
+  {{template "status"}}
+  <div class="content">
+    <p class="caption browse-intro">Free fine art, already reframed to 3840×2160 by <a href="https://www.reframed.gallery/" target="_blank" rel="noopener">reframed.gallery</a>. Import copies one picture into your library; nothing goes to the TV until you show it. Titles marked (AI) are AI-made by the site.</p>
+
+    {{if .Error}}<div class="status is-bad" style="margin:0 0 16px"><span class="dot"></span><div>{{.Error}}</div></div>{{end}}
+
+    {{if .SeasonList}}
+    <section class="chips" aria-label="For {{.Season.Name}}">
+      <span class="chips-label">For {{.Season.Name}}</span>
+      {{range .SeasonList}}<a class="chip{{if eq $.Current .Slug}} is-active{{end}}" href="/browse?c={{.Slug}}">{{.Title}}</a>{{end}}
+    </section>
+    {{end}}
+
+    {{if .Cards}}
+    <div class="grid">
+      {{range .Cards}}
+      <div class="card">
+        <a href="https://www.reframed.gallery{{.Path}}" target="_blank" rel="noopener" tabindex="-1">
+          <img src="{{if .Thumb}}{{.Thumb}}{{else}}/browse/thumb?p={{.Path}}{{end}}" alt="" loading="lazy" width="480" height="270" referrerpolicy="no-referrer">
+        </a>
+        <span class="t">{{.Title}}</span>
+        <span class="a"><span>{{.Artist}}</span>
+          {{if .InLibrary}}<a class="ontv is-ok" href="/item/{{.InLibrary}}"><span class="dot"></span>in library</a>
+          {{else}}<button class="btn-link ontv" data-import="{{.Path}}">Import</button>{{end}}</span>
+      </div>
+      {{end}}
+    </div>
+    {{else if .Query}}
+    <p class="empty">Nothing matches “{{.Query}}”. Search looks at artist and title words.</p>
+    {{end}}
+
+    {{if .Sources}}
+    <section class="chips all-colls" aria-label="All collections">
+      <span class="chips-label">All collections</span>
+      {{range .Sources}}<a class="chip{{if eq $.Current .Slug}} is-active{{end}}" href="/browse?c={{.Slug}}">{{.Title}}</a>{{end}}
+    </section>
+    {{end}}
+  </div>
+</main>
+</div>
+</body>
+</html>

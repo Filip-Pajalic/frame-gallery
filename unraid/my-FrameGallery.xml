@@ -1,0 +1,29 @@
+<?xml version="1.0"?>
+<Container version="2">
+  <Name>FrameGallery</Name>
+  <Repository>frame-gallery:local</Repository>
+  <Registry/>
+  <Network>bridge</Network>
+  <MyIP/>
+  <Shell>sh</Shell>
+  <Privileged>false</Privileged>
+  <Support/>
+  <Project/>
+  <ReadMe/>
+  <Overview>Local picture library for the Samsung The Frame in the living room. Originals, fitted 3840x2160 JPEGs, thumbnails and one SQLite file live under /data; the gallery never reads anything from the TV. The TV is contacted only when someone presses a button, one short attempt each time: no Wake-on-LAN, no polling, no retries. Build the image from the repository (docker build -t frame-gallery:local .) before adding this template.</Overview>
+  <Category>MediaApp:Photos HomeAutomation:</Category>
+  <WebUI>http://[IP]:[PORT:18000]/</WebUI>
+  <TemplateURL/>
+  <Icon/>
+  <ExtraParams>--restart=on-failure:5</ExtraParams>
+  <PostArgs/>
+  <CPUset/>
+  <DateInstalled/>
+  <DonateText/>
+  <DonateLink/>
+  <Requires>The first TV action shows an Allow prompt on the TV for "Frame Gallery" if the TV asks for one; the token, if any, is kept in /data/tv-token.</Requires>
+  <Config Name="Web UI" Target="18000" Default="18000" Mode="tcp" Description="Port for the web UI." Type="Port" Display="always" Required="true" Mask="false">18000</Config>
+  <Config Name="TV address" Target="FRAME_TV" Default="" Mode="" Description="The Frame on the LAN (TV: Settings › General › Network › Network Status). Contacted only on a button press." Type="Variable" Display="always" Required="true" Mask="false"></Config>
+  <Config Name="Largest crop" Target="FRAME_MAX_LOSS" Default="0.33" Mode="" Description="Import centre-crops a picture to 16:9 when that removes at most this share of it, and refuses it otherwise." Type="Variable" Display="advanced" Required="false" Mask="false">0.33</Config>
+  <Config Name="Library" Target="/data" Default="/mnt/user/appdata/frame-gallery" Mode="rw" Description="library.db (metadata, collections), originals/, fitted/, thumbs/ and the TV token. Owned by nobody:users (99:100). Appdata Backup picks it up like every other app." Type="Path" Display="always" Required="true" Mask="false">/mnt/user/appdata/frame-gallery</Config>
+</Container>

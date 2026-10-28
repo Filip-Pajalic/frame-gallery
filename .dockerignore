@@ -1,0 +1,6 @@
+data
+devdata
+*.exe
+unraid
+deploy.py
+.git

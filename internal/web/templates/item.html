@@ -1,0 +1,75 @@
+{{template "head" .Item.Title}}
+{{$it := .Item}}
+<div class="shell" style="grid-template-columns:minmax(0,1fr)">
+<main class="main">
+  <header class="top">
+    <a class="btn" href="/">← Library</a>
+    <h1>{{$it.Title}}</h1>
+    {{template "tvline" .TV}}
+    <div class="pager">
+      {{if .Prev}}<a class="btn" href="/item/{{.Prev}}" aria-label="Previous picture">‹</a>{{end}}
+      {{if .Next}}<a class="btn" href="/item/{{.Next}}" aria-label="Next picture">›</a>{{end}}
+    </div>
+  </header>
+  {{template "status"}}
+  <div class="content item">
+    <section class="preview">
+      <a href="/img/fitted/{{$it.ID}}" target="_blank" rel="noopener"><img src="/img/fitted/{{$it.ID}}" alt="{{$it.Title}}"></a>
+      <div class="facts caption">
+        <span>Original <span class="mono">{{$it.Width}}×{{$it.Height}}</span> · <a href="/img/original/{{$it.ID}}" download>download</a></span>
+        <span>Cropped away {{pct $it.Loss}}</span>
+        {{if $it.Upscaled}}<span class="is-warn">Upscaled from <span class="mono">{{$it.CropW}}×{{$it.CropH}}</span></span>{{end}}
+        <span>Added {{$it.Added.Local.Format "2006-01-02"}}</span>
+      </div>
+    </section>
+    <aside>
+      <div class="panel">
+        <h2>On the TV</h2>
+        {{if $it.TVID}}
+        <p><span class="dot is-ok"></span> On the TV as <span class="mono">{{$it.TVID}}</span> <span class="caption">· confirmed {{ago $it.TVSeen}}</span></p>
+        {{else}}
+        <p><span class="dot is-off is-muted"></span> Not on the TV</p>
+        {{end}}
+        <div class="row">
+          <button class="btn btn-primary" data-api="/api/item/{{$it.ID}}/show">Show on TV</button>
+          {{if $it.TVID}}
+          <button class="btn" data-api="/api/item/{{$it.ID}}/remove-tv" data-confirm="Remove this picture from the TV? It stays in the library.">Remove from TV</button>
+          {{else}}
+          <button class="btn" data-api="/api/item/{{$it.ID}}/upload">Upload only</button>
+          {{end}}
+        </div>
+        <p class="caption">Each button is one attempt. A TV that is off or asleep is left alone.</p>
+      </div>
+
+      <form class="panel" data-api="/api/item/{{$it.ID}}/meta">
+        <h2>Details</h2>
+        <div class="field"><label for="f-title">Title</label><input id="f-title" type="text" name="title" value="{{$it.Title}}"></div>
+        <div class="field"><label for="f-artist">Artist</label><input id="f-artist" type="text" name="artist" value="{{$it.Artist}}"></div>
+        <div class="row">
+          <div class="field" style="flex:1"><label for="f-year">Year</label><input id="f-year" type="text" name="year" value="{{$it.Year}}"></div>
+          <div class="field" style="flex:2"><label for="f-school">School</label><input id="f-school" type="text" name="school" value="{{$it.School}}"></div>
+        </div>
+        <div class="field"><label for="f-medium">Medium</label><input id="f-medium" type="text" name="medium" value="{{$it.Medium}}"></div>
+        <div class="field"><label for="f-source">Credit</label><input id="f-source" type="text" name="source" value="{{$it.Source}}"></div>
+        <div class="field"><label for="f-url">Source page</label><input id="f-url" type="url" name="url" value="{{$it.URL}}">{{if $it.URL}}<a class="caption" href="{{$it.URL}}" target="_blank" rel="noopener">open</a>{{end}}</div>
+        <div class="row"><button class="btn" type="submit">Save details</button></div>
+      </form>
+
+      <div class="panel">
+        <h2>Collections</h2>
+        {{if .Collections}}
+        <div class="checks">
+          {{range .Collections}}<label><input type="checkbox" data-coll="{{.ID}}" data-item="{{$it.ID}}"{{if has $it.Collects .ID}} checked{{end}}> {{.Name}}</label>{{end}}
+        </div>
+        {{else}}<p class="caption">No collections yet; add one in the library.</p>{{end}}
+      </div>
+
+      <div class="panel">
+        <button class="btn btn-danger" data-api="/api/item/{{$it.ID}}/delete" data-confirm="Delete “{{$it.Title}}” and its files from the library?{{if $it.TVID}} The copy on the TV stays.{{end}}">Delete from library</button>
+      </div>
+    </aside>
+  </div>
+</main>
+</div>
+</body>
+</html>

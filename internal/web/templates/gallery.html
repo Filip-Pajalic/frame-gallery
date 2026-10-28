@@ -1,0 +1,49 @@
+{{template "head" .Heading}}
+<div class="shell">
+{{template "side" .}}
+<main class="main">
+  <header class="top">
+    <h1>{{.Heading}} <span class="muted mono">{{len .Items}}</span></h1>
+    {{template "tvline" .TV}}
+    <div class="tv-actions">
+      <button class="btn" data-api="/api/tv/check">Check TV</button>
+      <button class="btn" data-api="/api/tv/artmode" data-on="1">Art mode on</button>
+      <button class="btn" data-api="/api/tv/artmode" data-on="0">Art mode off</button>
+      <button class="btn" data-api="/api/tv/sync" title="List what the TV holds and mark which pictures are on it">Sync{{if .LastSync}} <span class="muted small">· {{.LastSync}}</span>{{end}}</button>
+    </div>
+  </header>
+  {{template "status"}}
+  <div class="content">
+    <form class="drop" id="drop" data-collection="{{.Filter.Collection}}">
+      <input id="files" class="visually-hidden" type="file" name="files" accept="image/*" multiple>
+      <label class="btn btn-primary" for="files">Import pictures</label>
+      <span class="caption">or drop files here. Each one is centre-cropped to 16:9 if that removes at most {{pct .MaxLoss}}, otherwise it is refused; it goes to the TV with no mat.{{if .Filter.Collection}} Imports land in this collection.{{end}}</span>
+    </form>
+    {{if .Items}}
+    <div class="grid">
+      {{range .Items}}
+      <a class="card" href="/item/{{.ID}}">
+        <img src="/img/thumb/{{.ID}}" alt="" loading="lazy" width="480" height="270">
+        <span class="t">{{.Title}}</span>
+        <span class="a"><span>{{.Artist}}{{if and .Artist .Year}}, {{end}}{{.Year}}</span>
+          {{if .TVID}}<span class="ontv is-ok"><span class="dot"></span>on TV</span>{{end}}</span>
+      </a>
+      {{end}}
+    </div>
+    {{else}}
+    <p class="empty">Nothing here yet.</p>
+    {{end}}
+    {{if .Filter.Collection}}
+    <div class="row" style="margin-top:28px">
+      <form class="row" data-api="/api/collections/{{.Filter.Collection}}/rename">
+        <input type="text" name="name" value="{{.Heading}}" aria-label="Collection name" style="width:220px">
+        <button class="btn" type="submit">Rename</button>
+      </form>
+      <button class="btn btn-danger" data-api="/api/collections/{{.Filter.Collection}}/delete" data-confirm="Delete the collection “{{.Heading}}”? Its pictures stay in the library.">Delete collection</button>
+    </div>
+    {{end}}
+  </div>
+</main>
+</div>
+</body>
+</html>

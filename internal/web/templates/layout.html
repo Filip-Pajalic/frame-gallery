@@ -1,0 +1,39 @@
+{{define "head"}}<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>{{.}} · Frame Gallery</title>
+<link rel="stylesheet" href="/static/app.css?v={{v}}">
+<script src="/static/app.js?v={{v}}" defer></script>
+</head>
+<body>
+{{end}}
+
+{{define "side"}}
+<nav class="side" aria-label="Library">
+  <a class="brand" href="/">Frame Gallery</a>
+  <a class="nav{{if and (not .Browsing) (not .Filter.Collection) (not .Filter.OnTV) (not .Filter.NotOnTV)}} is-active{{end}}" href="/">All pictures <span class="n">{{.All}}</span></a>
+  <a class="nav{{if .Filter.OnTV}} is-active{{end}}" href="/?tv=on">On the TV <span class="n">{{.OnTV}}</span></a>
+  <a class="nav{{if .Filter.NotOnTV}} is-active{{end}}" href="/?tv=off">Not on the TV</a>
+  <h3>Find art</h3>
+  <a class="nav{{if .Browsing}} is-active{{end}}" href="/browse">Reframed Gallery</a>
+  <h3>Collections</h3>
+  {{range .Collections}}<a class="nav{{if eq $.Filter.Collection .ID}} is-active{{end}}" href="/?c={{.ID}}">{{.Name}} <span class="n">{{.Count}}</span></a>{{end}}
+  <form class="new-coll" data-api="/api/collections">
+    <label class="visually-hidden" for="coll-name">New collection</label>
+    <input id="coll-name" type="text" name="name" placeholder="New collection" required>
+    <button class="btn" type="submit">Add</button>
+  </form>
+</nav>
+{{end}}
+
+{{define "tvline"}}
+<span class="tv-line" id="tv-line">
+  {{if .At.IsZero}}<span class="dot is-off is-muted"></span> TV not checked
+  {{else if .Reachable}}<span class="dot is-ok"></span> TV answered {{ago .At}}{{if .ArtMode}} · art mode {{.ArtMode}}{{end}}
+  {{else}}<span class="dot is-bad"></span> TV not reachable {{ago .At}}{{end}}
+</span>
+{{end}}
+
+{{define "status"}}<div class="status" id="status" role="status" aria-live="polite" hidden></div>{{end}}
